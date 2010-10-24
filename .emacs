@@ -143,6 +143,39 @@
 ;;; END OUTLINE-MINOR
 
 
+
+(add-hook 'cperl-mode-hook
+          '(lambda ()
+             (outline-minor-mode)
+             (hide-sublevels 1)
+                  (setq
+                   cperl-indent-level 4
+                   cperl
+                   cperl-indent-parens-as-block t
+                   cperl-close-paren-offset -4)
+                  (require 'perl-completion)
+                  (perl-completion-mode t)))
+    
+(add-hook 'php-mode-hook
+          '(lambda ()
+             (outline-minor-mode)
+             (setq outline-regexp " *\\(private funct\\|public funct\\|funct\\|class\\|#head\\)")
+             (hide-sublevels 1)))
+
+(add-hook 'c++-mode-hook
+          '(lambda ()
+             (outline-minor-mode)
+             (setq outline-regexp "^[^\s\r\t\n]")
+             (hide-sublevels 1)))
+    
+(add-hook 'python-mode-hook
+          '(lambda ()
+             (outline-minor-mode)
+             (setq outline-regexp " *\\(def \\|clas\\|#hea\\)")
+             (hide-sublevels 1)))
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; random settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,16 +206,6 @@
 (add-to-list 'interpreter-mode-alist '("perl5" . cperl-mode))
 (add-to-list 'interpreter-mode-alist '("miniperl" . cperl-mode))
 
-
-(add-hook 'cperl-mode-hook
-          '(lambda ()
-                  (setq
-                   cperl-indent-level 4
-                   cperl
-                   cperl-indent-parens-as-block t
-                   cperl-close-paren-offset -4)
-                  (require 'perl-completion)
-                  (perl-completion-mode t)))
 
 ;;xml mode
 (add-to-list 'auto-mode-alist '("\\.m\\?t\\?sn\\'" . xml-mode))
