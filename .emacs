@@ -322,3 +322,9 @@ Pop up the buffer containing MARKER and scroll to MARKER if we ask the user."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  )
+
+
+;;autocomplete
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/elisp/ac-dict")
+(ac-config-default)
