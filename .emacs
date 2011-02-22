@@ -1,76 +1,88 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; To get started with emacs:
-;;
-;; 1. Set the AMDELISP variable to point to the elisp/ directory. For
-;;    example:
+;;;
 
+;;load the elisp directory
 (defvar AMDELISP (format "%s/elisp" (getenv "HOME")))
-
-;; 2. Load the start file.
 (load (format "%s/start" AMDELISP))
-
-;;add icicles
-;;(setq load-path (cons "~/icicles" load-path))
-
-
-;;(add-to-list 'load-path
-;;             "~/.emacs.d/plugins")
-;;(require 'yasnippet-bundle)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; everything else in this file is OPTIONAL but you may find some of
-;; it useful
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; look and feel
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; my colors, defined in prefs.el
+;;window size
+;(add-to-list 'default-frame-alist (cons 'width 80))
+(add-to-list 'default-frame-alist 
+             (cons 'height (/ (- (x-display-pixel-height) 200) (frame-char-height))))
+
+;; colors, defined in prefs.el
 (turn-on-color-theme-amd)
 
-;; put the window on the right, make it 87 columns wide. Also, enable
-;; the mouse wheel.
-(when window-system
-;;  (setq window-position 'right
-;;        window-columns 87
-;;        window-fudge '(0 12 0 55))
-
-;;  (when is-win32
-    (setq my-font (window-build-font "Consolas" 11));;)
-
-  ;;  (setq my-font (window-build-font "Hells Programmer" 8))
-  ;;  (setq my-font (window-build-font "Sheldon Narrow" 8))
-
-  ;; turn on the mouse wheel
-  (mouse-wheel-mode t)
-
-  ;; blink the cursor
-  (blink-cursor-mode 1)
-
-  ;; highlight line-mode
-  (global-hl-line-mode)
-  )
-
+(blink-cursor-mode 1)
 (menu-bar-mode 1)
 (transient-mark-mode t)
+(global-hl-line-mode)
+(mouse-wheel-mode t)
+(show-paren-mode 1)
+
+;;font to dejavu/11
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+ '(default ((t (:stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 110 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; keys
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-set-key-override0 "\t" 'indent-for-tab-command)
+
+;;keys for outline mode
+(global-set-key [C-M-left] 'hide-body)
+(global-set-key [C-M-right] 'show-all)
+(global-set-key [M-up] 'outline-previous-heading)
+(global-set-key [M-down] 'outline-next-heading)
+(global-set-key [M-left] 'hide-entry)
+(global-set-key [M-right] 'show-entry)
+(global-set-key [C-M-up] 'outline-previous-visible-heading)
+(global-set-key [C-M-down] 'outline-next-visible-heading)
+
+;;other keys
+(global-set-key [f4] 'goto-line)
+(global-set-key [f8]  'grep)
+(global-set-key [f10] 'menu-bar-open)
+(global-set-key [f11] 'set-buffer-file-coding-system)
+(global-set-key "\C-xb" 'switch-to-buffer-nocreate)
+(global-set-key "\C-\M-q" 'backward-up-list-indent)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; random settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq
+ abtags-keymap-prefix nil
+ backward-delete-char-untabify-method 'all
+ comint-input-ring-size 99
+ completion-ignore-case t
+ html-helper-do-write-file-hooks nil
+ shell-dirtrack-verbose nil
+ sort-fold-case t
+ sql-oracle-program "sqlplus"
+ tags-add-tables t
+ )
+
+;;force unix mode for files
+(add-hook 'before-save-hook
+           '(lambda ()
+            (set-buffer-file-coding-system 'unix)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; modes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'complete)
-(partial-completion-mode t)
-
-(when (not is-win32)
-  (require 'xcscope))
-
-;; turn of p4-check-mode unless absolutely necessary
-(setq p4-file-refresh-timer-time 0
-      p4-do-find-file nil)
+;;autocomplete
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/elisp/ac-dict")
+(ac-config-default)
 
 ;; spelling
 (setq
@@ -84,7 +96,6 @@
 (setq global-auto-revert-mode-text "-AR"
       auto-revert-interval 5)
 
-(add-hook 'text-mode-hook 'flyspell-mode) 
 
 ;; but leave it off for TAGS files
 (defun turn-off-auto-revert-hook ()
@@ -93,11 +104,8 @@
     (setq global-auto-revert-ignore-buffer t)))
 (add-hook 'find-file-hooks 'turn-off-auto-revert-hook)
 
-;;outline minor stuff
-
 (require 'generic-x)
-
-;;mode for outline: only things on first line are
+;;mode for outline: only lines with no spaces at the start are
 ;;in the mode.  This works well for js etc where
 ;;functions start a line.
 (defun generic-outline ()
@@ -105,9 +113,6 @@
   (setq outline-regexp "[^\n\s]+"))
 
 (add-hook 'outline-minor-mode-hook 'generic-outline)
-
-(add-hook 'logfile-mode-hook 'logfile-set-outline)
-
 
 (defun logfile-set-outline ()
   (make-local-variable 'outline-regexp)
@@ -129,20 +134,6 @@
   "mode for log files")
 
 (add-hook 'logfile-mode-hook 'logfile-set-outline)
-
-
-(global-set-key [C-M-left] 'hide-body)
-(global-set-key [C-M-right] 'show-all)
-(global-set-key [M-up] 'outline-previous-heading)
-(global-set-key [M-down] 'outline-next-heading)
-(global-set-key [M-left] 'hide-entry)
-(global-set-key [M-right] 'show-entry)
-(global-set-key [C-M-up] 'outline-previous-visible-heading)
-(global-set-key [C-M-down] 'outline-next-visible-heading)
-
-;;; END OUTLINE-MINOR
-
-
 
 (add-hook 'cperl-mode-hook
           '(lambda ()
@@ -174,32 +165,6 @@
              (setq outline-regexp " *\\(def \\|clas\\|#hea\\)")
              (hide-sublevels 1)))
 
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; random settings
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq
- abtags-keymap-prefix nil
- backward-delete-char-untabify-method 'all
- comint-input-ring-size 99
- completion-ignore-case t
- html-helper-do-write-file-hooks nil
- shell-dirtrack-verbose nil
- sort-fold-case t
- sql-oracle-program "sqlplus"
- tags-add-tables t
- )
-
-
-(show-paren-mode 1)
-
-;;force unix mode
-(add-hook 'before-save-hook
-           '(lambda ()
-            (set-buffer-file-coding-system 'unix)))
-
 ;;perl mode
 (add-to-list 'auto-mode-alist '("\\.\\([pP][Llm]\\|al\\)\\'" . cperl-mode))
 (add-to-list 'interpreter-mode-alist '("perl" . cperl-mode))
@@ -210,6 +175,12 @@
 ;;xml mode
 (add-to-list 'auto-mode-alist '("\\.m\\?t\\?sn\\'" . xml-mode))
 (add-to-list 'auto-mode-alist '("\\.dir\\'" . xml-mode))
+
+;;add outline-minor for a bunch of modes
+(mapcar (lambda (mode) (add-hook mode
+                          '(lambda ()
+                             (outline-minor-mode))))
+        '(emacs-lisp-mode-hook ruby-mode-hook scheme-mode-hook  ))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -289,42 +260,12 @@ Pop up the buffer containing MARKER and scroll to MARKER if we ask the user."
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; keys
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(global-set-key [f4] 'goto-line)
-(global-set-key [f7]  'abtags-find-file)
-(global-set-key [f8]  'grep)
-(global-set-key [f10] 'menu-bar-open)
-(global-set-key [f12] 'next-error)
-(global-set-key [f11] 'set-buffer-file-coding-system)
-(global-set-key "\C-xb" 'switch-to-buffer-nocreate)
-(global-set-key "\C-\M-q" 'backward-up-list-indent)
 
 
-;; use TAB key for completion everywhere
-(global-set-key-override0 "\t" 'indent-for-tab-command)
-;;(global-set-key-override0 "\t" 'clever-hippie-tab)
-;(global-set-key-override  "\t" 'clever-nxml-tab 'nxml-mode)
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
-;; '(cperl-hairy t)
- '(show-paren-mode t)
- '(transient-mark-mode t))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
-
-
-;;autocomplete
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/elisp/ac-dict")
-(ac-config-default)
+ '(show-paren-mode t))
