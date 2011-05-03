@@ -1,9 +1,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
+
+
 ;;load the elisp directory
 (defvar AMDELISP (format "%s/elisp" (getenv "HOME")))
 (load (format "%s/start" AMDELISP))
+
+
+;;My loads
+;;load nxhtml
+(load (format "%s/nxhtml/autostart" AMDELISP))
+;;js-mode
+(load (format "%s/javascript" AMDELISP))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; look and feel
