@@ -1,18 +1,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 
-
-
-;;load the elisp directory
 (defvar AMDELISP (format "%s/elisp" (getenv "HOME")))
-(load (format "%s/start" AMDELISP))
-
 
 ;;My loads
 ;;load nxhtml
 (load (format "%s/nxhtml/autostart" AMDELISP))
 ;;js-mode
 (load (format "%s/javascript" AMDELISP))
+
+
+;;load the elisp directory
+
+(load (format "%s/start" AMDELISP))
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; look and feel
@@ -159,7 +162,7 @@
 (add-hook 'php-mode-hook
           '(lambda ()
              (outline-minor-mode)
-             (setq outline-regexp " *\\(private funct\\|public funct\\|funct\\|class\\|#head\\)")
+             (setq outline-regexp " *\\(private funct\\|public funct\\|funct\\|class\\|#head\\|<\\?php\\|\\?>\\)")
              (hide-sublevels 1)))
 
 (add-hook 'c++-mode-hook
