@@ -14,6 +14,9 @@
 ;;js-mode
 (load (format "%s/javascript" AMDELISP))
 
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; look and feel
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,6 +39,9 @@
 ;;font to dejavu/11
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  '(default ((t (:stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 110 :width normal :foundry "unknown" :family "DejaVu Sans Mono")))))
 
 
@@ -121,7 +127,7 @@
   (make-local-variable 'outline-regexp)
   (setq outline-regexp "[^\n\s]+"))
 
-(add-hook 'outline-minor-mode-hook 'generic-outline)
+;;(add-hook 'outline-minor-mode-hook 'generic-outline)
 
 (defun logfile-set-outline ()
   (make-local-variable 'outline-regexp)
@@ -148,13 +154,10 @@
           '(lambda ()
              (outline-minor-mode)
              (hide-sublevels 1)
-                  (setq
-                   cperl-indent-level 4
-                   cperl
-                   cperl-indent-parens-as-block t
-                   cperl-close-paren-offset -4)
-                  (require 'perl-completion)
-                  (perl-completion-mode t)))
+             (setq
+              cperl-indent-level 4
+              cperl-indent-parens-as-block t
+              cperl-close-paren-offset -4)))
     
 (add-hook 'php-mode-hook
           '(lambda ()
@@ -191,6 +194,9 @@
                              (outline-minor-mode))))
         '(emacs-lisp-mode-hook ruby-mode-hook scheme-mode-hook  ))
 
+
+;; nxhtml for eruby
+(add-to-list 'auto-mode-alist '("\\.html\\.erb\\'" . eruby-html-mumamo-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; functions
@@ -277,4 +283,5 @@ Pop up the buffer containing MARKER and scroll to MARKER if we ask the user."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
+ '(cperl-indent-level 4)
  '(show-paren-mode t))
