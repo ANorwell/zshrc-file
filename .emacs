@@ -177,6 +177,14 @@
              (setq outline-regexp " *\\(def \\|clas\\|#hea\\)")
              (hide-sublevels 1)))
 
+(add-hook 'ruby-mode-hook
+          '(lambda ()
+             (outline-minor-mode)
+             (setq outline-regexp " *\\(def \\|clas\\|require\\|describe\\|public\\|private\\)")
+             (hide-sublevels 1)))
+
+
+
 ;;perl mode
 (add-to-list 'auto-mode-alist '("\\.\\([pP][Llm]\\|al\\)\\'" . cperl-mode))
 (add-to-list 'interpreter-mode-alist '("perl" . cperl-mode))
@@ -192,7 +200,7 @@
 (mapcar (lambda (mode) (add-hook mode
                           '(lambda ()
                              (outline-minor-mode))))
-        '(emacs-lisp-mode-hook ruby-mode-hook scheme-mode-hook  ))
+        '(emacs-lisp-mode-hook scheme-mode-hook  ))
 
 
 ;; nxhtml for eruby
@@ -284,4 +292,5 @@ Pop up the buffer containing MARKER and scroll to MARKER if we ask the user."
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(cperl-indent-level 4)
+ '(ruby-electric-expand-delimiters-list nil)
  '(show-paren-mode t))
