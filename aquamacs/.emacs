@@ -58,7 +58,7 @@
 (add-hook 'scala-mode-hook
           '(lambda ()
              (outline-minor-mode)
-             (setq outline-regexp " *\\(class\\|def\\|package\\|import\\|case class\\|object\\)")))
+             (setq outline-regexp " *\\(class\\|def\\|package\\|import\\|case class\\|object\\|trait\\|abstract\\|mixin\\)")))
 
 (add-hook 'php-mode-hook
           '(lambda ()
