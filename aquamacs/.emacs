@@ -1,11 +1,18 @@
- (set-face-attribute 'default nil :height 250)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(set-face-attribute 'default nil :height 250)
 
 (add-to-list 'load-path "/Users/anorwell/elisp/scala-emacs")
 (add-to-list 'load-path "/Users/anorwell/elisp/")
 (require 'scala-mode-auto)
 (require 'besi)
 
+;;ensime-mode for scala
+(add-to-list 'load-path "~/misc/ensime/elisp/")
+(require 'ensime)
+(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 
+;;newline and indent for various modes
 (mapcar (lambda (hooksym)
           (add-hook hooksym
                     (lambda ()
@@ -25,6 +32,10 @@
           sh-mode-hook
           ))
 
+(desktop-save-mode 1)
+
+;;set C-xC-b to buffer-menu instead of list-buffers
+(global-set-key (kbd "C-x C-b") 'buffer-menu)
 
 ;;outline-minor-mode
 ;;keys for outline mode
@@ -42,8 +53,6 @@
 (global-set-key [f8]  'grep)
 (global-set-key [f10] 'menu-bar-open)
 (global-set-key [f11] 'set-buffer-file-coding-system)
-(global-set-key "\C-xb" 'switch-to-buffer-nocreate)
-(global-set-key "\C-\M-q" 'backward-up-list-indent)
 
 (add-hook 'cperl-mode-hook
           '(lambda ()
