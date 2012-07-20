@@ -1,16 +1,73 @@
+(defvar *aquamacs-p* (boundp 'aquamacs-version))
+(when *aquamacs-p*
+(tool-bar-mode -1))
+(setq inhibit-splash-screen t)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (set-face-attribute 'default nil :height 250)
+(global-auto-revert-mode t)
 
 (add-to-list 'load-path "/Users/anorwell/elisp/scala-emacs")
 (add-to-list 'load-path "/Users/anorwell/elisp/")
 (require 'scala-mode-auto)
 (require 'besi)
 
+;;ibuffer
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(autoload 'ibuffer "ibuffer" "List buffers." t)
+(setq ibuffer-show-empty-filter-groups nil)
+(setq ibuffer-saved-filter-groups
+      (quote (("default"
+               ("conf" (name . "conf$"))
+               ("adm-test" (filename . "work/adm4/src/test"))
+               ("adm" (filename ."work/adm4"))
+               ("oldadm-test" (filename . "work/adm/src/test"))
+               ("oldadm" (filename ."work/adm"))
+               ("starburst-test" (filename . "work/analytics/src/test"))
+               ("starburst" (filename ."work/analytics"))
+               ("cavalry-test" (filename . "work/cavalry/src/test"))
+               ("cavalry" (filename ."work/cavalry"))
+               ("smoke-test" (filename . "work/smoke/src/test"))
+               ("smoke" (filename ."work/smoke"))
+
+               ("other-scala-test" (filename . "src/test.*scala$"))
+               ("other-scala" (name . "scala$"))
+               ("dired" (mode . dired-mode))
+               ("perl" (mode . cperl-mode))
+               ("emacs" (or
+                         (name . "^\\*scratch\\*$")
+                         (name . "^\\*Messages\\*$")))))))
+(add-hook 'ibuffer-mode-hook
+          (lambda ()
+            (ibuffer-switch-to-saved-filter-groups "default")))
+
+
+;;ido-mode
+(require 'ido)
+
+;;whitespace
+ (require 'whitespace)
+ (setq whitespace-style '(face empty tabs lines-tail trailing))
+ (global-whitespace-mode t)
+
 ;;ensime-mode for scala
 (add-to-list 'load-path "~/misc/ensime/elisp/")
 (require 'ensime)
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+
+
+;;before-save hook for scala
+(add-hook 'scala-mode-hook
+     (lambda()
+        (add-hook 'local-write-file-hooks
+              '(lambda()
+                 (save-excursion
+                   (delete-trailing-whitespace))))))
+
+;;markdown mode
+(autoload 'markdown-mode "markdown-mode.el" "Major mode for editing Markdown files" t)
+(setq auto-mode-alist (cons '("\\.md" . markdown-mode) auto-mode-alist))
 
 ;;newline and indent for various modes
 (mapcar (lambda (hooksym)
@@ -31,11 +88,6 @@
           scheme-mode-hook
           sh-mode-hook
           ))
-
-(desktop-save-mode 1)
-
-;;set C-xC-b to buffer-menu instead of list-buffers
-(global-set-key (kbd "C-x C-b") 'buffer-menu)
 
 ;;outline-minor-mode
 ;;keys for outline mode
@@ -67,7 +119,7 @@
 (add-hook 'scala-mode-hook
           '(lambda ()
              (outline-minor-mode)
-             (setq outline-regexp " *\\(class\\|def\\|package\\|import\\|case class\\|object\\|trait\\|abstract\\|mixin\\)")))
+             (setq outline-regexp "[\s\r\t]*\\(class\\|def\\|package\\|import\\|case class\\|object\\|trait\\|abstract\\|mixin\\|protected def\\|sealed\\|override\\|private def\\|describe\\|it(\\)")))
 
 (add-hook 'php-mode-hook
           '(lambda ()
@@ -92,3 +144,36 @@
              (outline-minor-mode)
              (setq outline-regexp " *\\(def \\|clas\\|require\\|describe\\|public\\|private\\)")
              (hide-sublevels 1)))
+
+(defun spec-buffer-switch ()
+  "Switch to/from the Spec file in the test folder of a scala/maven
+project"
+  (interactive)
+  (switch-to-buffer-other-window (find-file-noselect
+   (if (string-match "Spec.scala$" (buffer-file-name))
+(concat
+  (substring (replace-regexp-in-string "test" "main"
+      (buffer-file-name)) 0 -10)
+  ".scala")
+(concat
+  (substring (replace-regexp-in-string "main" "test"
+      (buffer-file-name)) 0 -6)
+  "Spec.scala")))))
+
+(global-set-key (kbd "C-,") 'spec-buffer-switch)
+
+
+(defun pretty-print-xml-region (begin end)
+  "Pretty format XML markup in region. You need to have nxml-mode
+http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+this.  The function inserts linebreaks to separate tags that have
+nothing but whitespace between them.  It then indents the markup
+by using nxml's indentation rules."
+  (interactive "r")
+  (save-excursion
+      (nxml-mode)
+      (goto-char begin)
+      (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+        (backward-char) (insert "\n"))
+      (indent-region begin end))
+    (message "Ah, much better!"))
