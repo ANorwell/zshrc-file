@@ -1,3 +1,5 @@
+source ~/.antigen.zsh
+
 #set up path
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 PATH=$PATH:$HOME/bin
@@ -6,8 +8,8 @@ PATH=/usr/local/git/bin:$PATH
 PATH=/opt/local/bin:/opt/local/sbin:$PATH
 export PATH
 
-LD_LIBRARY_PATH=/usr/local/lib
-export LD_LIBRARY_PATH
+#LD_LIBRARY_PATH=/usr/local/lib
+#export LD_LIBRARY_PATH
 
 #make sbt suck less
 SBT_OPTS="-XX:MaxPermSize=378m -Djava.library.path=/usr/local/lib"
@@ -16,14 +18,33 @@ export SBT_OPTS
 #pg dir
 export PGDATA=/usr/local/var/postgres
 
+##set up antigen theme
+antigen-lib
+antigen-bundle zsh-users/zsh-syntax-highlighting
+antigen-bundle zsh-users/zsh-completions src
+
+# Tracks your most used directories, based on 'frecency'. And its accompanying
+# setup code.
+antigen-bundle rupa/z
+add-zsh-hook precmd _z_precmd
+function _z_precmd {
+    _z --add "$PWD"
+}
+
+antigen-theme candy
+antigen-apply
+
+
 ##don't make wordchars so inclusive
 export WORDCHARS=''
 
 ###Aliases
-alias emacs='open -a /Applications/Emacs.app $1'
-em() { /Applications/Emacs.app/Contents/MacOS/bin/emacsclient -n $*; }
+alias emacs='open -a /Applications/Emacs\ 2.app/ $1'
+em() { /Applications/Emacs\ 2.app/Contents/MacOS/bin/emacsclient -n $*; }
 
 safe-push() { sbt test && git push $*; }
+
+fix-ivy() { find ~/.ivy2/cache/ -name 'ivydata*.properties' | xargs perl -p -i -e 's/resolver=inter-project/resolver=releases/g' }
 
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 export GRAPHITE_ROOT=/Users/anorwell/work/misc/graphite
@@ -32,6 +53,7 @@ export PYTHONPATH=$PYTHONPATH:$GRAPHITE_ROOT/webapp
 ###############
 # zsh Customization
 ###############
+
 
 #Color table from: http://www.understudy.net/custom.html
 fg_black=%{$'\e[0;30m'%}
@@ -80,8 +102,8 @@ bindkey -e
 
 ### vcs in prompt
 
-setopt prompt_subst
-autoload -Uz vcs_info
+#setopt prompt_subst
+#autoload -Uz vcs_info
 zstyle ':vcs_info:*' actionformats \
     '%F{5}(%f%s%F{5})%F{3}-%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f '
 zstyle ':vcs_info:*' formats       \
@@ -97,6 +119,7 @@ vcs_info_wrapper() {
     echo "%{$fg[grey]%}${vcs_info_msg_0_}%{$reset_color%}$del"
   fi
 }
+
 
 function __git_prompt {
   local DIRTY="%{$fg[yellow]%}"
@@ -131,11 +154,11 @@ function __git_prompt {
   fi
 }
  
-PROMPT="
-${fg_lgreen}%n@${at_underl}%m${at_underloff}${fg_white}[${fg_cyan}%~${fg_white}]
-[${fg_green}%T${fg_white}]:${at_normal}"
+#PROMPT="
+#${fg_lgreen}%n@${at_underl}%m${at_underloff}${fg_white}[${fg_cyan}%~${fg_white}]
+#[${fg_green}%T${fg_white}]:${at_normal}"
 
-RPROMPT=$'$(__git_prompt)'
+#RPROMPT=$'$(__git_prompt)'
 
 
 
@@ -152,8 +175,8 @@ setopt AUTO_PUSHD
 
 
 HISTFILE=~/.zsh-histfile
-HISTSIZE=1000
-SAVEHIST=1000
+HISTSIZE=1000000
+SAVEHIST=1000000
 
 setopt APPEND_HISTORY
 
@@ -190,7 +213,10 @@ bindkey "^[[B" history-beginning-search-forward
  
 ## Enables the extgended globbing features
 setopt extendedglob
- 
+
+##disable correcting
+unsetopt correct_all
+
 #Set some ZSH styles
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'

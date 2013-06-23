@@ -1,25 +1,44 @@
+ (set-face-attribute 'default nil :font "DejaVu Sans Mono-16")
+
 (defvar *aquamacs-p* (boundp 'aquamacs-version))
-(when *aquamacs-p*
-(tool-bar-mode -1))
+(tool-bar-mode -1)
 (setq inhibit-splash-screen t)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (set-face-attribute 'default nil :height 150)
 (global-auto-revert-mode t)
+(column-number-mode t)
 
+;;backup to this dir
+(setq backup-directory-alist `(("." . "~/.emacs-backup")))
+
+ (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                           ("marmalade" . "http://marmalade-repo.org/packages/")
+                           ("melpa" . "http://melpa.milkbox.net/packages/")))
+
+(setq show-paren-style 'parenthesis)
+(show-paren-mode +1)
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
+(unless (package-installed-p 'scala-mode2)
+  (package-refresh-contents) (package-install 'scala-mode2))
 
 ;;paren mode (parens matching)
 (require 'paren)
 (show-paren-mode 1)
 (set-face-attribute 'show-paren-match-face nil :weight 'extra-bold)
 
-(add-to-list 'load-path "/Users/anorwell/elisp/scala-emacs")
+;;(add-to-list 'load-path "/Users/anorwell/elisp/scala-emacs")
 (add-to-list 'load-path "/Users/anorwell/elisp/")
-(require 'scala-mode-auto)
-(require 'besi)
+;;(require 'scala-mode-auto)
+;;(require 'besi)
 
 ;;theming
-(setq custom-theme-load-path '(custom-theme-directory t))
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+;;(setq custom-theme-load-path '(custom-theme-directory t))
 
 ;;ibuffer
 (require 'ibuffer)
@@ -72,7 +91,7 @@
 
 ;;whitespace
  (require 'whitespace)
- (setq whitespace-style '(face empty tabs lines-tail trailing))
+ (setq whitespace-style '(face empty tabs trailing))
  (global-whitespace-mode t)
 
 ;;ensime-mode for scala
@@ -186,6 +205,24 @@ project"
 
 (global-set-key (kbd "C-,") 'spec-buffer-switch)
 
+(defun reb-query-replace-this-regxp (replace)
+  "Uses the regexp built with re-builder to query the target buffer.
+This function must be run from within the re-builder buffer, not the target
+buffer.
+
+Argument REPLACE String used to replace the matched strings in the buffer. 
+ Subexpression references can be used (\1, \2, etc)."
+  (interactive "sReplace with: ")
+  (if (eq major-mode 'reb-mode)
+      (let ((reg (reb-read-regexp)))
+        (select-window reb-target-window)
+        (save-excursion
+          (beginning-of-buffer)
+          (query-replace-regexp reg replace)))
+    (message "Not in a re-builder buffer!")))
+
+(define-key reb-mode-map "\C-c\M-%" 'reb-query-replace-this-regxp)
+
 
 (defun pretty-print-xml-region (begin end)
   "Pretty format XML markup in region. You need to have nxml-mode
@@ -210,20 +247,32 @@ by using nxml's indentation rules."
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(ido-enable-flex-matching t))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector ["#2e3436" "#a40000" "#4e9a06" "#c4a000" "#204a87" "#5c3566" "#729fcf" "#eeeeec"])
+ '(ansi-term-color-vector ["#3f3f3f" "#cc9393" "#7f9f7f" "#f0dfaf" "#8cd0d3" "#dc8cc3" "#93e0e3" "#dcdccc"])
+ '(column-number-mode t)
+ '(custom-enabled-themes (quote (deeper-blue)))
+ '(custom-safe-themes (quote ("36a309985a0f9ed1a0c3a69625802f87dee940767c9e200b89cdebdb737e5b29" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
+ '(fci-rule-color "#383838")
+ '(fill-column 80)
+ '(ido-enable-flex-matching t)
+ '(show-paren-mode t)
+ '(show-paren-priority 1000)
+ '(show-paren-style (quote parenthesis))
+ '(tool-bar-mode nil))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(show-paren-match ((t (:background "#770077" :foreground "#259188" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(whitespace-empty ((t (:background "yellow"))))
  '(whitespace-line ((t (:background "#001818")))))
 
 ;;use solarized theme
-(load-theme 'solarized-dark)
+;;(load-theme 'solarized-dark)
 
 (server-start)
