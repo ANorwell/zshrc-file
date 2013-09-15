@@ -1,5 +1,3 @@
- (set-face-attribute 'default nil :font "DejaVu Sans Mono-16")
-
 (defvar *aquamacs-p* (boundp 'aquamacs-version))
 (tool-bar-mode -1)
 (setq inhibit-splash-screen t)
@@ -8,6 +6,7 @@
 (set-face-attribute 'default nil :height 150)
 (global-auto-revert-mode t)
 (column-number-mode t)
+(scroll-bar-mode -1)
 
 ;;backup to this dir
 (setq backup-directory-alist `(("." . "~/.emacs-backup")))
@@ -39,6 +38,9 @@
 ;;theming
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 ;;(setq custom-theme-load-path '(custom-theme-directory t))
+
+;;code syntax highlighting for org-mode
+(setq org-src-fontify-natively t)
 
 ;;ibuffer
 (require 'ibuffer)
@@ -221,7 +223,7 @@ Argument REPLACE String used to replace the matched strings in the buffer.
           (query-replace-regexp reg replace)))
     (message "Not in a re-builder buffer!")))
 
-(define-key reb-mode-map "\C-c\M-%" 'reb-query-replace-this-regxp)
+;;(define-key reb-mode-map "\C-c\M-%" 'reb-query-replace-this-regxp)
 
 
 (defun pretty-print-xml-region (begin end)
@@ -238,6 +240,69 @@ by using nxml's indentation rules."
         (backward-char) (insert "\n"))
       (indent-region begin end))
     (message "Ah, much better!"))
+
+;; smex for meta
+(global-set-key [(meta x)] (lambda ()
+                             (interactive)
+                             (or (boundp 'smex-cache)
+                                 (smex-initialize))
+                             (global-set-key [(meta x)] 'smex)
+                             (smex)))
+
+(global-set-key [(shift meta x)] (lambda ()
+                                   (interactive)
+                                   (or (boundp 'smex-cache)
+                                       (smex-initialize))
+                                   (global-set-key [(shift meta x)] 'smex-major-mode-commands)
+                                   (smex-major-mode-commands)))
+
+
+;;;;;; ediff mode diffing binary files
+
+(defvar ediff-do-hexl-diff nil
+  "variable used to store trigger for doing diff in hexl-mode")
+(defadvice ediff-files-internal (around ediff-files-internal-for-binary-files activate)
+  "catch the condition when the binary files differ
+
+the reason for catching the error out here (when re-thrown from the inner advice)
+is to let the stack continue to unwind before we start the new diff
+otherwise some code in the middle of the stack expects some output that
+isn't there and triggers an error"
+  (let ((file-A (ad-get-arg 0))
+        (file-B (ad-get-arg 1))
+        ediff-do-hexl-diff)
+    (condition-case err
+        (progn
+          ad-do-it)
+      (error
+       (if ediff-do-hexl-diff 
+           (let ((buf-A (find-file-noselect file-A))
+                 (buf-B (find-file-noselect file-B)))
+             (with-current-buffer buf-A
+               (hexl-mode 1))
+             (with-current-buffer buf-B
+               (hexl-mode 1))
+             (ediff-buffers buf-A buf-B))
+         (error (error-message-string err)))))))
+
+(defadvice ediff-setup-diff-regions (around ediff-setup-diff-regions-for-binary-files activate)
+  "when binary files differ, set the variable "
+  (condition-case err
+      (progn
+        ad-do-it)
+    (error
+     (setq ediff-do-hexl-diff
+           (and (string-match-p "^Errors in diff output.  Diff output is in.*"
+                                (error-message-string err))
+                (string-match-p "^\\(Binary \\)?[fF]iles .* and .* differ"
+                                (buffer-substring-no-properties
+                                 (line-beginning-position)
+                                 (line-end-position)))
+                (y-or-n-p "The binary files differ, look at the differences in hexl-mode? ")))
+     (error (error-message-string err)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; end ediff binary file stuff
+;;;;;;;;;;;;;;
 
 
 (defun what-face (pos)
@@ -268,11 +333,20 @@ by using nxml's indentation rules."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "#181a26" :foreground "gray80" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "apple" :family "DejaVu_Sans_Mono"))))
  '(show-paren-match ((t (:background "#770077" :foreground "#259188" :inverse-video nil :underline nil :slant normal :weight bold))))
  '(whitespace-empty ((t (:background "yellow"))))
  '(whitespace-line ((t (:background "#001818")))))
 
 ;;use solarized theme
 ;;(load-theme 'solarized-dark)
+
+(require 'multi-web-mode)
+(setq mweb-default-major-mode 'html-mode)
+(setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+                  (js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+                  (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
+(multi-web-global-mode 1)
 
 (server-start)
