@@ -6,7 +6,11 @@ PATH=$PATH:$HOME/bin
 PATH=/usr/local/bin:$PATH
 PATH=/usr/local/git/bin:$PATH
 PATH=/opt/local/bin:/opt/local/sbin:$PATH
+PATH="$HOME/.cask/bin:$PATH"
 export PATH
+
+GOPATH=$HOME/gopath
+export GOPATH
 
 #LD_LIBRARY_PATH=/usr/local/lib
 #export LD_LIBRARY_PATH
@@ -39,8 +43,13 @@ antigen-apply
 export WORDCHARS=''
 
 ###Aliases
-alias emacs='open -a /Applications/Emacs\ 2.app/ $1'
-em() { /Applications/Emacs\ 2.app/Contents/MacOS/bin/emacsclient -n $*; }
+alias em="emacsclient -n --alternate-editor=emacs"
+
+
+alias -g L='| less'
+alias -g J='| python -m json.tool'
+alias -g HD='| hexdump -C'
+alias -g X='| xmllint --format -'
 
 safe-push() { sbt test && git push $*; }
 
