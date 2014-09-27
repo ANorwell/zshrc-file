@@ -1,16 +1,29 @@
 source ~/.antigen.zsh
 
+[[ $EMACS = t ]] && unsetopt zle
+
 #set up path
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+#PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
 PATH=$PATH:$HOME/bin
 PATH=/usr/local/bin:$PATH
 PATH=/usr/local/git/bin:$PATH
 PATH=/opt/local/bin:/opt/local/sbin:$PATH
 PATH="$HOME/.cask/bin:$PATH"
+PATH="$HOME/.rbenv/bin:$PATH"
+PATH="/usr/local/texlive/2014basic/bin/universal-darwin:$PATH"
 export PATH
 
+##rbenv
+eval "$(rbenv init -)"
+
+##GO
 GOPATH=$HOME/gopath
 export GOPATH
+
+SHELL=/usr/local/bin/zsh
+export SHELL
+
 
 #LD_LIBRARY_PATH=/usr/local/lib
 #export LD_LIBRARY_PATH
@@ -43,22 +56,28 @@ antigen-apply
 export WORDCHARS=''
 
 ###Aliases
-alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs $* &"
+alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
 alias em="emacsclient -n --alternate-editor=emacs"
+alias be="bundle exec"
 
 
 alias -g L='| less'
 alias -g J='| python -m json.tool'
 alias -g HD='| hexdump -C'
 alias -g X='| xmllint --format -'
+alias -g G='| grep'
 
-safe-push() { sbt test && git push $*; }
+safe-push() { ./script/parallel_test.rb && git push $*; }
 
 fix-ivy() { find ~/.ivy2/cache/ -name 'ivydata*.properties' | xargs perl -p -i -e 's/resolver=inter-project/resolver=releases/g' }
 
 export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 export GRAPHITE_ROOT=/Users/anorwell/work/misc/graphite
 export PYTHONPATH=$PYTHONPATH:$GRAPHITE_ROOT/webapp
+
+find-name() { find ${2-.} -name "*$1*" }
+
+changed-tests() { git diff --name-only "$1" | grep '\(test/unit\|test/integration\|test/functional\).*rb' | xargs spin push }
 
 ###############
 # zsh Customization
@@ -163,7 +182,7 @@ function __git_prompt {
     echo -n "]"
   fi
 }
- 
+
 #PROMPT="
 #${fg_lgreen}%n@${at_underl}%m${at_underloff}${fg_white}[${fg_cyan}%~${fg_white}]
 #[${fg_green}%T${fg_white}]:${at_normal}"
@@ -220,7 +239,7 @@ setopt HIST_FIND_NO_DUPS
 bindkey "^[[A" history-beginning-search-backward
 bindkey "^[[B" history-beginning-search-forward
 
- 
+
 ## Enables the extgended globbing features
 setopt extendedglob
 
@@ -288,3 +307,16 @@ _force_rehash() {
 if [ -f `brew --prefix`/etc/autojump ]; then
   . `brew --prefix`/etc/autojump
 fi
+
+
+function ec2env {
+        env=$1
+        export EC2_KEYS_HOME=~/.ec2${env:+"_${env}"}
+        source $EC2_KEYS_HOME/profile
+}
+ec2env backupifydev
+
+
+ssh-add -t 0 ~/.ssh/id_rsa &> /dev/null
+ssh-add -t 0 ~/.ec2_backupify/backupify.pem &> /dev/null
+ssh-add -t 0 ~/.ec2_backupifydev/backupifydev.pem &> /dev/null
