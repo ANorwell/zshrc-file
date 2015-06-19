@@ -56,7 +56,8 @@ antigen-apply
 export WORDCHARS=''
 
 ###Aliases
-alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
+#alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
+alias emacs="/usr/local/Cellar/emacs/HEAD/Emacs.app/Contents/MacOS/Emacs"
 alias em="emacsclient -n --alternate-editor=emacs"
 alias be="bundle exec"
 
