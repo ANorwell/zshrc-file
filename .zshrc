@@ -52,7 +52,7 @@ ZSH_THEME="candy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git ruby scala sbt osx rails brew symfony2 redis-cli)
+plugins=(git ruby scala sbt osx rails brew symfony2 redis-cli fasd)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -158,3 +158,13 @@ SAVEHIST=1000000
 ssh-add -t 0 ~/.ssh/id_rsa &> /dev/null
 ssh-add -t 0 ~/.ec2_backupify/backupify.pem &> /dev/null
 ssh-add -t 0 ~/.ec2_backupifydev/backupifydev.pem &> /dev/null
+
+
+alias a='fasd -a'        # any
+alias s='fasd -si'       # show / search / select
+alias d='fasd -d'        # directory
+alias f='fasd -f'        # file
+alias sd='fasd -sid'     # interactive directory selection
+alias sf='fasd -sif'     # interactive file selection
+alias z='fasd_cd -d'     # cd, same functionality as j in autojump
+alias zz='fasd_cd -d -i' # cd with interactive selection
