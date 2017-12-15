@@ -4,7 +4,6 @@
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/anorwell/.antigen/repos/https-COLON--SLASH--SLASH-github.com-SLASH-robbyrussell-SLASH-oh-my-zsh.git
 
-
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
@@ -52,7 +51,7 @@ ZSH_THEME="candy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git ruby scala sbt osx rails brew symfony2 redis-cli fasd)
+plugins=(git ruby scala sbt osx rails brew symfony2 redis-cli fasd zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -85,10 +84,11 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias emacs="/usr/local/Cellar/emacs/HEAD/Emacs.app/Contents/MacOS/Emacs"
+alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
 alias em="emacsclient -n --alternate-editor=emacs"
 alias be="bundle exec"
 
+alias fix_paste="printf \"\e[?2004l\""
 
 alias -g L='| less'
 alias -g J='| jq "."'
@@ -108,7 +108,13 @@ alias gr='git recent'
 alias gp='git push'
 alias gf='git fetch'
 alias gfp='git pull'
+alias gfm='gco master; gf'
 alias grb='git rebase'
+alias gdelete_remotes="git fetch --all --prune; git branch -vv | grep ': gone]' | grep -v '^master' | grep -v '^\\*' | awk '{print \$1 }' | xargs -L1 git branch -D"
+
+alias mysqlstaging='mysql -hbfy-legomysql-staging-1.datto.lan -u legocloud -D legoCloud -pdattolegostaging2017'
+alias mysqllocal='mysql -u root -D legoCloud'
+alias mysqlprod='mysql -hbfy-legomysql-staging-1.datto.lan -u legocloud -D legoCloud -p'
 
 
 #set up path
@@ -150,6 +156,16 @@ function java7 {
 }
 
 java8
+
+find-name() { find ${2-.} -name "*$1*" }
+find-path() { find ${2-.} -path "*$1*" }
+find-tests() { find ${2-.} -path "*test/*$1*test.rb" }
+push-tests() { find-tests $1 | xargs spin push }
+
+changed-tests() { git diff --name-only "$1" | grep '\(test/unit\|test/integration\|test/functional\).*rb' | xargs spin push }
+
+rename() { perl -pi -e "s/$1/$2/g" $3 }
+find-rename() { ag -l $1 | tee /dev/tty | xargs perl -pi -e "s/$1/$2/g" $3 }
 
 HISTFILE=~/.zsh-histfile
 HISTSIZE=1000000
