@@ -55,6 +55,12 @@ plugins=(git ruby scala sbt osx rails brew symfony2 redis-cli fasd zsh-syntax-hi
 
 source $ZSH/oh-my-zsh.sh
 
+
+## LEGO
+export LEGO_DEV_REPO=~/work/ScalaBob
+export LEGO_DEV_ROOT=/lego-dev
+
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -114,7 +120,9 @@ alias gdelete_remotes="git fetch --all --prune; git branch -vv | grep ': gone]' 
 
 alias mysqlstaging='mysql -hbfy-legomysql-staging-1.datto.lan -u legocloud -D legoCloud -pdattolegostaging2017'
 alias mysqllocal='mysql -u root -D legoCloud'
-alias mysqlprod='mysql -hbfy-legomysql-staging-1.datto.lan -u legocloud -D legoCloud -p'
+alias mysqlprod='mysql -h10.40.109.200 -u legocloud -D legoCloud -p'
+
+#alias cat='bat'
 
 
 #set up path
@@ -127,9 +135,11 @@ PATH="$HOME/.cask/bin:$PATH"
 PATH="$HOME/.rbenv/bin:$PATH"
 PATH="/usr/local/texlive/2014basic/bin/universal-darwin:$PATH"
 PATH="$HOME/.chefdk/gem/ruby/2.1.0/bin:$PATH"
+PATH=/Users/anorwell/.rbenv/versions/2.1.3/lib/ruby/gems/2.1.0:$PATH
 PATH="$HOME/work/go/bin:$PATH"
 PATH=$HOME/bin:$PATH
 PATH=$PATH:$HOME/.rbenv/versions/2.1.2/bin
+PATH=/Users/anorwell/miniconda2/bin:$PATH
 
 export PATH
 
@@ -184,3 +194,6 @@ alias sd='fasd -sid'     # interactive directory selection
 alias sf='fasd -sif'     # interactive file selection
 alias z='fasd_cd -d'     # cd, same functionality as j in autojump
 alias zz='fasd_cd -d -i' # cd with interactive selection
+
+
+eval "$(/usr/local/bin/fasd --init auto)"
