@@ -7,7 +7,8 @@ export ZSH=/Users/anorwell/.antigen/repos/https-COLON--SLASH--SLASH-github.com-S
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="candy"
+#ZSH_THEME="candy"
+ZSH_THEME=powerlevel10k/powerlevel10k
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -51,13 +52,13 @@ ZSH_THEME="candy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git ruby scala sbt osx rails brew symfony2 redis-cli fasd zsh-syntax-highlighting)
+plugins=(git ruby scala sbt osx brew symfony2 redis-cli fasd zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
 
 ## LEGO
-export LEGO_DEV_REPO=~/work/ScalaBob
+export LEGO_DEV_REPO=~/work/lego
 export LEGO_DEV_ROOT=/lego-dev
 
 
@@ -90,7 +91,7 @@ export LEGO_DEV_ROOT=/lego-dev
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
+#alias emacs="/Applications/Emacs.app/Contents/MacOS/Emacs"
 alias em="emacsclient -n --alternate-editor=emacs"
 alias be="bundle exec"
 
@@ -122,6 +123,10 @@ alias mysqlstaging='mysql -hbfy-legomysql-staging-1.datto.lan -u legocloud -D le
 alias mysqllocal='mysql -u root -D legoCloud'
 alias mysqlprod='mysql -h10.40.109.200 -u legocloud -D legoCloud -p'
 
+alias webstart='bin/console server:run -p 8001'
+alias cloudstart='bin/console server:run -p 8000'
+alias mockstart='bin/console server:run localhost:3000'
+
 #alias cat='bat'
 
 
@@ -140,11 +145,16 @@ PATH="$HOME/work/go/bin:$PATH"
 PATH=$HOME/bin:$PATH
 PATH=$PATH:$HOME/.rbenv/versions/2.1.2/bin
 PATH=/Users/anorwell/miniconda2/bin:$PATH
+#PATH=~/.pyenv/shims/:$PATH
+PATH=~/miniconda3/bin:$PATH
+PATH=~/.composer/vendor/bin:$PATH
+
+PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
 
 export PATH
 
 ##rbenv
-eval "$(rbenv init -)"
+#eval "$(rbenv init -)"
 
 ##GO
 export PATH=$PATH:/usr/local/opt/go/libexec/bin
@@ -165,8 +175,6 @@ function java7 {
     java -version
 }
 
-java8
-
 find-name() { find ${2-.} -name "*$1*" }
 find-path() { find ${2-.} -path "*$1*" }
 find-tests() { find ${2-.} -path "*test/*$1*test.rb" }
@@ -176,6 +184,8 @@ changed-tests() { git diff --name-only "$1" | grep '\(test/unit\|test/integratio
 
 rename() { perl -pi -e "s/$1/$2/g" $3 }
 find-rename() { ag -l $1 | tee /dev/tty | xargs perl -pi -e "s/$1/$2/g" $3 }
+
+node() {  ssh -t $1 'lego-diagnose; bash -l' < "\n"  }
 
 HISTFILE=~/.zsh-histfile
 HISTSIZE=1000000
@@ -197,3 +207,7 @@ alias zz='fasd_cd -d -i' # cd with interactive selection
 
 
 eval "$(/usr/local/bin/fasd --init auto)"
+export PATH="/usr/local/opt/scala@2.11/bin:$PATH"
+export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
+export PATH="/usr/local/opt/php@7.1/bin:$PATH"
+source ~/.purepower
