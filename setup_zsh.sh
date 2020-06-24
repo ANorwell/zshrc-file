@@ -32,6 +32,11 @@ alias gpah='gp -u anorwell HEAD'
 
 export PATH=$PATH:"$HOME/.local/bin"
 
+find-name() { find ${2-.} -name "*$1*" }
+find-path() { find ${2-.} -path "*$1*" }
+find-tests() { find ${2-.} -path "*test/*$1*test.rb" }
+push-tests() { find-tests $1 | xargs spin push }
+
 EOM
 
 echo '[ -f ~/.custom.zsh ] && source ~/.custom.zsh' >> ~/.zshrc
