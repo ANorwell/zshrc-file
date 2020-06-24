@@ -52,6 +52,8 @@ EOM
 
 source ~/.zshrc
 
-# install fzf
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
 p10k configure
+
+# install fzf -- seems like it has to be after p10k in the .zsh file...
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+
