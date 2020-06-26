@@ -30,8 +30,6 @@ alias gpoh='gp -u origin HEAD'
 alias gplh='gp -u lego HEAD'
 alias gpah='gp -u anorwell HEAD'
 
-export PATH=$PATH:"$HOME/.local/bin"
-
 find-name() { find ${2-.} -name "*$1*" }
 find-path() { find ${2-.} -path "*$1*" }
 find-tests() { find ${2-.} -path "*test/*$1*test.rb" }
