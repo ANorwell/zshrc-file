@@ -37,7 +37,9 @@ push-tests() { find-tests $1 | xargs spin push }
 
 EOM
 
-echo '\n[ -f ~/.custom.zsh ] && source ~/.custom.zsh' >> ~/.zshrc
+cat > $HOME/.zshrc <<- EOM
+[ -f ~/.custom.zsh ] && source ~/.custom.zsh
+EOM
 
 cat > $HOME/.gitconfig <<- EOM
 [alias]
