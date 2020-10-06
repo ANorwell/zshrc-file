@@ -49,7 +49,7 @@ cat > $HOME/.gitconfig <<- EOM
         recent = "for-each-ref --sort=-committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'" --count 12
 [user]
         name = Arron Norwell
-        email = anorwell@datto.com
+        email = anorwell@gmail.com
 [core]
         editor = mg
         excludesfile = /Users/anorwell/.gitignore_global
