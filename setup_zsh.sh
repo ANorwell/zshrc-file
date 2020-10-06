@@ -37,7 +37,7 @@ push-tests() { find-tests $1 | xargs spin push }
 
 EOM
 
-cat > $HOME/.zshrc <<- EOM
+cat >> $HOME/.zshrc <<- EOM
 [ -f ~/.custom.zsh ] && source ~/.custom.zsh
 EOM
 
