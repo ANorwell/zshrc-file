@@ -27,14 +27,22 @@ alias gfp='git pull'
 alias gfm='gco master; gf'
 alias grb='git rebase'
 alias gpoh='gp -u origin HEAD'
-alias gplh='gp -u lego HEAD'
 alias gpah='gp -u anorwell HEAD'
 
-find-name() { find ${2-.} -name "*$1*" }
-find-path() { find ${2-.} -path "*$1*" }
-find-tests() { find ${2-.} -path "*test/*$1*test.rb" }
-push-tests() { find-tests $1 | xargs spin push }
+export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 
+find-name() { find . -name "**" }
+find-path() { find . -path "**" }
+find-tests() { find . -path "*test/**test.rb" }
+push-tests() { find-tests  | xargs spin push }
+
+setopt inc_append_history
+# Reloads the history whenever you use it
+setopt share_history
+
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000000
+SAVEHIST=10000000
 EOM
 
 cat >> $HOME/.zshrc <<- EOM
