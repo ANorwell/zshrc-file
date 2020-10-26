@@ -30,10 +30,11 @@ alias gpoh='gp -u origin HEAD'
 alias gpah='gp -u anorwell HEAD'
 
 export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+export ZSHZ_NO_RESOLVE_SYMLINKS=1
 
-find-name() { find . -name "**" }
-find-path() { find . -path "**" }
-find-tests() { find . -path "*test/**test.rb" }
+find-name() { find . -name "*$1*" }
+find-path() { find . -path "*$1*" }
+find-tests() { find . -path "*test/*$1*test.rb" }
 push-tests() { find-tests  | xargs spin push }
 
 setopt inc_append_history
